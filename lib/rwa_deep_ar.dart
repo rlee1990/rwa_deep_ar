@@ -70,42 +70,26 @@ class CameraDeepAr extends StatefulWidget {
   final List<Effects> supportedEffects;
 
   const CameraDeepAr(
-      {Key key,
-      @required this.cameraDeepArCallback,
-      @required this.androidLicenceKey,
-      @required this.iosLicenceKey,
-      @required this.onImageCaptured,
-      @required this.onVideoRecorded,
-      @required this.onCameraReady,
+      {Key? key,
+      required this.cameraDeepArCallback,
+      required this.androidLicenceKey,
+      required this.iosLicenceKey,
+      required this.onImageCaptured,
+      required this.onVideoRecorded,
+      required this.onCameraReady,
       this.cameraMode = CameraMode.masks,
       this.cameraDirection = CameraDirection.front,
       this.recordingMode = RecordingMode.video,
-      this.supportedFilters = const [
-        Filters.sepia,
-        Filters.bleachbypass,
-      ],
-      this.supportedMasks = const [
-        Masks.none,
-        Masks.aviators,
-        Masks.bigmouth,
-        Masks.dalmatian,
-        Masks.look2,
-        Masks.flowers,
-        Masks.grumpycat,
-        Masks.lion,
-      ],
-      this.supportedEffects = const [
-        Effects.none,
-        Effects.fire,
-        Effects.heart,
-      ]})
+      required this.supportedFilters,
+      required this.supportedMasks,
+      required this.supportedEffects})
       : super(key: key);
   @override
   _CameraDeepArState createState() => _CameraDeepArState();
 }
 
 class _CameraDeepArState extends State<CameraDeepAr> {
-  CameraDeepArController _controller;
+  late CameraDeepArController _controller;
   bool hasPermission = false;
   List<Effects> get supportedEffects => widget.supportedEffects;
   List<Filters> get supportedFilters => widget.supportedFilters;
@@ -113,8 +97,18 @@ class _CameraDeepArState extends State<CameraDeepAr> {
 
   @override
   void initState() {
+    supportedMasks:
+    Masks.values;
     // TODO: implement initState
     super.initState();
+    // DeepCameraArPermissions.checkForPermission().then((value) {
+    //   print("Value checked.... $value");
+    //
+    //   if (this.mounted)
+    //     setState(() {
+    //       hasPermission = value;
+    //     });
+    // });
   }
 
   @override
@@ -125,10 +119,9 @@ class _CameraDeepArState extends State<CameraDeepAr> {
 
   @override
   Widget build(BuildContext context) {
-
     final Map<String, Object> args = {
-      "androidLicenceKey": widget.androidLicenceKey ?? "",
-      "iosLicenceKey": widget.iosLicenceKey ?? "",
+      "androidLicenceKey": widget.androidLicenceKey,
+      "iosLicenceKey": widget.iosLicenceKey,
       "recordingMode": RecordingMode.values.indexOf(widget.recordingMode),
       "direction": CameraDirection.values.indexOf(widget.cameraDirection),
       "cameraMode": CameraMode.values.indexOf(widget.cameraMode)
@@ -260,19 +253,19 @@ class CameraDeepArController {
   //   return channel.invokeMethod('previous');
   // }
 
-  Future setCameraMode({@required CameraMode camMode}) async {
+  Future setCameraMode({required CameraMode camMode}) async {
     return channel.invokeMethod('setCameraMode', <String, dynamic>{
       'cameraMode': CameraMode.values.indexOf(camMode),
     });
   }
 
-  Future setRecordingMode({@required RecordingMode recordingMode}) async {
+  Future setRecordingMode({required RecordingMode recordingMode}) async {
     return channel.invokeMethod('setRecordingMode', <String, dynamic>{
       'recordingMode': RecordingMode.values.indexOf(recordingMode),
     });
   }
 
-  Future switchCameraDirection({@required CameraDirection direction}) async {
+  Future switchCameraDirection({required CameraDirection direction}) async {
     return channel.invokeMethod('switchCameraDirection', <String, dynamic>{
       'direction': CameraDirection.values.indexOf(direction),
     });
